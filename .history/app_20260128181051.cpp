@@ -1,0 +1,198 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<limits>
+#include<fstream>
+#include<sstream>
+
+struct Expense{
+    double amount;
+    std::string category;
+    std::string description;
+    std::string date;
+};
+std::vector<Expense> expenses = {{100, "Food", "Lunch", "11-01-2026"},{130, "Toy", "Beyblade", "08-02-2025"}};
+
+void addExpense(std::vector<Expense>& expenses){
+    Expense e;
+    std::cout<<"Add Expense selected\n";
+    while(!(std::cin>>e.amount) || e.amount<0){
+        std::cout << "Invalid amount. Try again: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+
+    std::cout<<"Enter Category: ";
+    std::getline(std::cin,e.category);
+
+    std::cout<<"Enter description: ";
+    std::getline(std::cin,e.description);
+
+    std::cout<<"Enter date (DD-MM-YYYY): ";
+    std:getline(std::cin,e.date);
+}
+void viewExpenses(const std::vector<Expense>& expenses){
+    std::cout<<"View Expenses selected\n";
+    if(expenses.empty()){
+        std::cout<<"No expenses recorded yet.\n";
+        return;
+    }
+    for(size_t i=0;i<expenses.size();i++){
+        const Expense& e = expenses[i];
+        
+        std::cout<<i+1<<'.'<<"Amount: "<<e.category<<", Description: "<<e.description<<", Date: "<<e.date<<std::endl;
+    }
+}
+void editExpense(std::vector<Expense>& expenses){
+    std::cout<<"Edit Expense selected\n";
+    if(expenses.empty()){
+        std::cout<<"No expenses to edit.\n";
+        return;
+    }
+    viewExpenses(expenses);
+    size_t index;
+    std::cout<<"Enter expense number to edit: ";
+    if(!(std::cin>>index)){
+        std::cout<<"Invalid input.\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+        return;
+    }
+    if(index==0||index>expenses.size()){
+        std::cout<<"Invalid expense number.\n";
+        return;
+    }
+    Expense& e = expenses[index-1];
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    std::cout<<"Enter new amount: ";
+    while(!(std::cin>>e.amount)||e.amount<0){
+        std::cout<<"Invalid amount. Try again: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    }
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    std::cout<<"Enter new category: ";
+    std::getline(std::cin, e.category);
+    
+    std::cout<<"Enter new description: ";
+    std::getline(std::cin, e.description);
+
+    std::cout<<"Enter new date: ";
+    std::getline(std::cin, e.date);
+}
+void deleteExpense(std::vector<Expense>& expenses){
+    std::cout<<"Delete Expense selected\n";
+    if(expenses.empty()){
+        std::cout<<"No expenses to delete.\n";
+        return;
+    }
+    viewExpenses(expenses);
+    size_t index;
+    std::cout<<"Enter expense number to delete: ";
+
+    if(!(std::cin>>index)){
+        std::cout<<"Invalid input.\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    if(index==0||index>expenses.size()){
+        std::cout<<"Invalid expense number.\n";
+        return;
+    }
+    expenses.erase(expenses.begin()+(index-1));
+    std::cout<<"Expense deleted successfully.\n";
+}
+bool loadExpensesFromFile(const std::string& filename, std::vector<Expense>& expenses){
+    std::ofstream outFile(filename);
+    if(!outFile.is_open()) return false;
+    for(const Expense& e: expenses){
+        outFile <<e.date<<"|"
+                <<e.category<<"|"
+                <<e.amount<<"|"
+                <<e.description<<"\n";
+    }
+    return true;
+}
+bool loadExpensesToFile(const std::string& filename, const std::vector<Expense>& expenses){
+    std::ofstream outFile(filename);
+    if(!outFile.is_open()) return false;
+
+    for(const Expense& e:expenses){
+        outFile <<e.date<<"|"
+                <<e.category<<"|"
+                <<e.amount<<"|"
+                <<e.description<<"\n";
+    }
+    return true;
+}
+bool parseExpenseLine(const std::string& line, Expense& e){
+    std::stringstream ss(line);
+    std::string token;
+
+    if(!std::getline)
+}
+
+int main(){
+    int choice;
+    while(true){
+        std::cout<<"\n--- Expense Tracker ---\n";
+        std::cout<<"1. Add Expense\n";
+        std::cout<<"2. View Expenses\n";
+        std::cout<<"3. Edit Expense\n";
+        std::cout<<"4. Delete Expense\n";
+        std::cout<<"5. Exit Program\n";
+        std::cout<<"Enter Choice: \n";
+
+        // std::cin>>choice;
+        
+        if(!(std::cin>>choice)){
+            std::cout<<"Invalid input. Please enter a number.\n";
+
+            std::cin.clear(); //clear fail state
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+            continue;
+        }
+        switch(choice){
+            case 1:
+                int option;
+                do{
+                    std::cout<<"\n1. Add Expense\n2. Exit\n   Choice:";
+                    // std::cin>>option; //Invalid input like "c" breaks cin here. It puts it into a weird repeating "stuck" state. 
+                    if(!(std::cin>>option)){
+                        std::cout<<"Invalid input. Please enter a number.\n";
+
+                        std::cin.clear(); //clear fail state
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+                        continue;
+                    }
+                    switch(option){
+                        case 1:
+                            addExpense(expenses);
+                            break;
+                        case 2:
+                            std::cout<<"Returning to Menu:";
+                            break;
+                        default:
+                            std::cout<<"Invalid choice:";
+                    }
+                }while(option!=2);
+            case 2:
+                viewExpenses(expenses);
+                break;
+            case 3:
+                editExpense(expenses);
+                break;
+            case 4:
+                deleteExpense(expenses);
+                break;
+            case 5:
+                std::cout<<"Exiting program ...\n";
+                return 0;
+            default:
+                std::cout<<"Invalid Choice. Try again\n";
+        }
+    }
+}
